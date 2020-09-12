@@ -1,4 +1,4 @@
-# Dung's Abstract Argumentation Framework Package - V 1.0 (2020)
+# Dung Abstract Argumentation Framework Package - V 1.0 (2020)
 
 ### Developed by Agustina Dinamarca
 ### agustinadinamarca@gmail.com
