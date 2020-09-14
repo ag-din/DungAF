@@ -324,10 +324,17 @@ class Dung:
 		Set: Conflict-free subsets
 
 		"""
-		pwr = powerset(self.__arguments)
-		if len(self.__arguments) > 0:
-			if len(self.__relations) > 0:
-				for x in self.__relations:
+		args = self.__arguments
+		rel = self.__relations
+
+		pwr = powerset(args)
+
+		la = len(args)
+		lr = len(rel)
+
+		if la > 0:
+			if lr > 0:
+				for x in rel:
 					x1 = x[0]
 					x2 = x[1]
 					dele = []
@@ -356,31 +363,33 @@ class Dung:
 
 		"""
 		cfs = self.compute_cfs()
+
+		rel = self.__relations
+
 		admissible = []
-		if checkArgumentsInRelations(self.__arguments, self.__relations) == True:
+		if checkArgumentsInRelations(self.__arguments, rel) == True:
 			if len(cfs) > 0:
 				for cfset in cfs:
-					if len(cfset) >= 0:
-						attackers = set()
+					attackers = set()
+					for cfsetmember in cfset:
+						attackers = attackers.union(get_arg_attackers(cfsetmember, rel))
+					attackedbycfsmembers = []
+					for attacker in attackers:
+						atk = False
+						attackedby = get_arg_attackers(attacker, rel)
 						for cfsetmember in cfset:
-							attackers = attackers.union(get_arg_attackers(cfsetmember, self.__relations))
-						attackedbycfsmembers = []
-						for attacker in attackers:
-							atk = False
-							attackedby = get_arg_attackers(attacker, self.__relations)
-							for cfsetmember in cfset:
-								if cfsetmember in attackedby:
-									atk = True
-							attackedbycfsmembers.append(atk)
-						if all(attackedbycfsmembers):
-							if cfset == ():
-								admissible.append(set())
-							else:
-								d = set()
-								for k in cfset:
-									for kk in k:
-										d.add(kk)
-								admissible.append(d)
+							if cfsetmember in attackedby:
+								atk = True
+						attackedbycfsmembers.append(atk)
+					if all(attackedbycfsmembers):
+						if cfset == ():
+							admissible.append(set())
+						else:
+							d = set()
+							for k in cfset:
+								for kk in k:
+									d.add(kk)
+							admissible.append(d)
 				return admissible
 			else:
 				return []
